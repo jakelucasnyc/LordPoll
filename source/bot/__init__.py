@@ -11,7 +11,7 @@ logger.addHandler(handler)
 
 intents = discord.Intents.default()
 
-bot = commands.Bot('/', intents=intents)
+bot = commands.Bot('poll.', intents=intents)
 numList = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'zero']
 emojiDict = {num: emojize(f':{num}:', use_aliases=True) for num in numList} 
 
