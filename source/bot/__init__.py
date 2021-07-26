@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import logging
 from emoji import emojize, demojize
+import os
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.INFO)
@@ -19,30 +20,27 @@ emojiDict = {num: emojize(f':{num}:', use_aliases=True) for num in numList}
 async def on_ready():
     logger.info('Bot Ready')
 
+# @bot.event
+# async def on_command_error(ctx, error):
+#     if error == commands.errors.CommandNotFound:
+#         await ctx.send('Invalid Command.')
+
+
 @bot.command()
-async def poll(ctx, *, arg=None):
-    logger.info('Poll Command Ran')
-    if arg is None:
-        await ctx.send('Command requires poll options. Input each parameter as a comma-separated list(e.g. /poll option one, option-two, third option !?@).')
-        return
+async def reload(ctx, extension: str):
+    try:
+        bot.unload_extension(f'bot.cogs.{extension}')
+        bot.load_extension(f'bot.cogs.{extension}')
+    except Exception as e:
+        await ctx.send(str(e))
+    else:
+        await ctx.send('Reload Successful.')
 
-    optionsList = arg.split(',') 
-    if len(optionsList) > 10:
-        await ctx.send('Too many options. Maximum of 10 options')
-        return
+for filename in os.listdir('./bot/cogs'):
+    if filename.endswith('.py'):
+        bot.load_extension(f'bot.cogs.{filename[:-3]}')
+    
 
-    message = ''
-    for idx, option in enumerate(optionsList):
-        addedOption = f'{emojiDict[numList[idx]]} -> {option}'
-        if idx < len(optionsList)-1:
-            addedOption += '\n\n'
-        message += addedOption
-
-    messageObj = await ctx.send(message)
-    messageId = messageObj.id
-    for reaction in range(len(optionsList)):
-        addedEmoji = emojiDict[numList[reaction]]
-        await messageObj.add_reaction(addedEmoji)
 
     
 
