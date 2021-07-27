@@ -65,5 +65,14 @@ class Polls(commands.Cog):
         else:
             logger.info('pollscrim command complete')
 
+    @commands.command()
+    async def pollgroup(self, ctx, mention, *, arg=None):
+        try:
+            await self._createPoll(ctx, arg, message=mention)
+        except Exception as e:
+            await ctx.send(str(e))
+        else:
+            logger.info('pollgroup command complete')
+
 def setup(bot):
     bot.add_cog(Polls(bot))
